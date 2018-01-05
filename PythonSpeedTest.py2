@@ -1,0 +1,81 @@
+# PythonSpeedTest
+# This is Randy's attempt at using Python as a Network Speed Test method
+# first I installed the module with 'sudo pip install pyspeedtest'
+
+import pyspeedtest #note, this is only good for Python 2, not Py3
+st = pyspeedtest.SpeedTest()
+ping = st.ping()
+ping = str(round(ping, 2))
+download = st.download()
+download = download/1000000 #to convert to Mbits/sec
+# below doesn't work, perhaps is treated as string already?
+download = '{0:.2f}'.format(download) #trims to 2 decimal places#next, put in comma formatting
+#download = "{:,}".format(download)
+upload = st.upload()
+upload = upload/1000000
+upload = '{0:.2f}'.format(upload) #trims to 2 decimal places
+#upload = "{:,}".format(upload)
+#to identify which machine the data is for:
+import os
+myhost = os.uname()[1]
+print ("Host: ")
+print (myhost)
+#to enable the date/time functions below
+import datetime
+now = datetime.datetime.now()
+print("Date:")
+import datetime
+today = datetime.date.today()
+print(today)
+
+import platform
+platform.node()
+
+#for retrieving IP address
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip=(s.getsockname()[0])
+print(ip)
+s.close()
+
+#date/time formats here: http://www.pythonforbeginners.com/basics/python-datetime-time-examples
+#print "Date:"
+#date = now.date
+#print (date)
+print ("Day:")
+day = datetime.date.today().strftime("%A")
+print (day)
+weekday = datetime.date.today().strftime("%w")
+print ("WeekDay:")
+print (weekday)
+print ("Hour:")
+import datetime as dt
+hour = dt.datetime.now().hour
+print (hour)
+print ("Ping (ms):")
+print (ping)
+print ("Download (Mbit/s):")
+print (download)
+print ("Upload (Mbit/s):")
+print (upload)
+
+#converting to strings to avoid mixed types for export
+today = str(today)
+day = str(day)
+ip = str(ip)
+ping = str(ping)
+weekday = str(weekday)
+hour = str(hour)
+download = str(download)
+upload = str(upload)
+
+headerrow = "Host" + ";" + "IP" + ";" + "Date" + ";" + "Day" + ";" + "Weekday" + ";" + "Hour" + ";" + "Ping" + ";" + "Download" + ";" + "Upload"
+print (headerrow)
+#datarow = myhost + ";" + ip + ";" + today + ";" + day + ";" + weekday + ";" + hour + ";" + ping + ";" + download + ";" + upload #using %s instead of + because it forces string
+datarow = '\n' + myhost + ";" + ip + ";" + today + ";" + day + ";" + weekday + ";" + hour + ";" + ping + ";" + download + ";" + upload #using %s instead of + because it forces string
+print (datarow)
+fd = open('pyspeedtestdata.csv','a')
+#fd.write(headerrow)  "use only for new data file to write column headers
+fd.write(datarow)
+fd.close()
